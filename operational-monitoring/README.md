@@ -102,6 +102,8 @@ The automation:
 
 ## How It Works
 
+![Automated Operational Monitoring Workflow](./operational-monitoring.png)
+
 ```text
         Active Cases
       (~18 per dashboard)
