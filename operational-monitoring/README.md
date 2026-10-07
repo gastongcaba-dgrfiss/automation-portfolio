@@ -299,6 +299,110 @@ This project represents an important principle in how I think about operations a
 > **People should not have to repeatedly check whether something happened. Systems can monitor; people can decide what to do next.**
 
 ---
+## Tech Stack & Architecture
+
+`Python` · `Playwright` · `Google Apps Script` · `Google Sheets` · `Google Triggers` · `Environment Variables` · `Browser Automation`
+
+The monitoring system combines different technologies according to the role each one performs.
+
+### Python + Playwright
+
+Python handles the browser automation layer.
+
+Using Playwright, the workflow accesses the government case-management system, navigates the required interfaces, searches for active cases and retrieves the information needed for monitoring.
+
+Playwright Inspector was also used during development to understand and validate the navigation flow before translating it into automated browser interactions.
+
+### Secure Authentication
+
+Authentication credentials are kept outside the source code using environment variables (`.env`).
+
+This prevents production credentials from being hard-coded into the automation logic.
+
+### Google Apps Script
+
+Google Apps Script handles part of the workflow orchestration and connects the monitoring process with the operational dashboards.
+
+It is also used for automation logic around spreadsheet updates, calculations, notifications and reporting.
+
+### Google Sheets
+
+Google Sheets functions as the operational interface used by the team.
+
+The dashboard contains the active portfolio and displays information such as:
+
+- Current stage
+- Responsible department
+- Movement dates
+- Time spent in each stage
+- Relevant status changes
+- Resolution status
+
+### Scheduled Triggers
+
+Google triggers are used to execute scheduled parts of the workflow throughout the day.
+
+This allows monitoring to occur consistently without requiring someone to manually start each review.
+
+---
+
+## System Architecture
+
+```text
+             SCHEDULED TRIGGER
+                    │
+                    ▼
+          WORKFLOW ORCHESTRATION
+          Google Apps Script
+                    │
+                    ▼
+          PYTHON AUTOMATION
+                    │
+              Playwright
+                    │
+                    ▼
+        CASE MANAGEMENT SYSTEM
+                    │
+           Secure authentication
+                via .env
+                    │
+                    ▼
+            Browser navigation
+                    │
+                    ▼
+           Case history retrieval
+                    │
+                    ▼
+           Status interpretation
+                    │
+                    ▼
+          GOOGLE SHEETS DASHBOARD
+                    │
+        ┌───────────┼───────────┐
+        ▼           ▼           ▼
+     Update      Elapsed      Change
+     status       time       detection
+        │           │           │
+        └───────────┼───────────┘
+                    ▼
+             NOTIFICATION LAYER
+                    │
+           ┌────────┴────────┐
+           ▼                 ▼
+     Status reports     Resolution alerts
+           │                 │
+           └────────┬────────┘
+                    ▼
+             HUMAN DECISION
+```
+
+The architecture intentionally separates repetitive system monitoring from human decision-making.
+
+The automation collects, updates and monitors operational information.
+
+People remain responsible for deciding when and how to intervene.
+
+---
 
 ## Privacy & Confidentiality
 
